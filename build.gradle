@@ -76,4 +76,8 @@ tasks.register('bunBuild', CrossPlatformExec) {
 	commandLine 'bun', 'run', 'build'
 }
 
+wrapper {
+	distributionUrl = "https://services.gradle.org/distributions/gradle-8.4-all.zip"
+}
+
 jar.dependsOn bunBuild
