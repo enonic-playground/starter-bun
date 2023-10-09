@@ -5,6 +5,10 @@
 		//──────────────────────────────────────────────────────────────────────
 		"allowUmdGlobalAccess": true,
 		"baseUrl": "./",
+
+		// "module": "CommonJS",
+		"module": "commonjs", // Didn't help, still uses export rather than exports :(
+
 		"moduleResolution": "node",
 
 		"paths": {
@@ -66,7 +70,9 @@
 		//──────────────────────────────────────────────────────────────────────
 		// Language and Environment
 		//──────────────────────────────────────────────────────────────────────
-		"lib": [],
+		"lib": [
+			"ES5"
+		],
 
 		// We set target in tsup.config.ts instead
 		//"target": "ES3", // tsup WARNING Unrecognized target environment "ES3"
@@ -76,6 +82,7 @@
 		// Completeness
 		//──────────────────────────────────────────────────────────────────────
 		"skipLibCheck": true,
+		"target": "ES5"
 	},
 	"exclude": [
 		"src/main/resources/assets/**/*.*",
@@ -83,9 +90,8 @@
 	],
 	"include": [
 		// Make sure default types matches Nashorn
-		"node_modules/typescript/lib/lib.es5.d.ts",
+		// "node_modules/typescript/lib/lib.es5.d.ts",
 
-		"src/main/resources/**/*.tsx",
 		"src/main/resources/**/*.ts"
 	]
 }

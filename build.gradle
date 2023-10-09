@@ -70,6 +70,15 @@ dependencies {
 // 	version = '18.18.0'
 // }
 
+processResources {
+	exclude '**/.gitkeep'
+	exclude '**/*.json'
+	exclude '**/*.sass'
+	exclude '**/*.png'
+	exclude '**/*.ts'
+	exclude '**/*.tsx'
+}
+
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -95,6 +104,11 @@ tasks.register('bunBuildStatic', CrossPlatformExec) {
 	dependsOn bunInstall
 }
 
+tasks.register('nodeEsmToCjs', CrossPlatformExec) {
+	commandLine 'node', 'bun/esm-to-cjs.node.js', 'build/resources/main/site/pages/samplePage/samplePage.js'
+	dependsOn bunBuildServer
+}
+
 // tasks.register('npmBuild', NpmTask) {
 // 	args = [
 // 		'run',
@@ -112,5 +126,5 @@ wrapper {
 	distributionUrl = "https://services.gradle.org/distributions/gradle-8.4-all.zip"
 }
 
-jar.dependsOn bunBuildServer
+jar.dependsOn nodeEsmToCjs
 jar.dependsOn bunBuildStatic

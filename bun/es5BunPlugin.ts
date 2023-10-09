@@ -31,16 +31,46 @@ export function es5BunPlugin(): BunPlugin {
 				// console.log('isTs:%s, isReact:%s', isTs, isReact);
 
 				let transformOptions: SWCOptions = {
+					// env: {
+					// 	// forceAllTransforms: true
+					// },
 					jsc: {
-						parser: { syntax: isTs ? 'typescript' : 'ecmascript', tsx: isReact },
-						target: 'es5',
 						/**
 						 * Use external helpers to avoid duplicate helpers in the output.
 						 * esbuild muse has alias `@swc/helpers`
 						 */
-						externalHelpers: true,
+						// externalHelpers: true,
+						keepClassNames: true,
+						parser: {
+							// decorators: true,
+							// decoratorsBeforeExport: true,
+							syntax: isTs ? 'typescript' : 'ecmascript',
+							tsx: isReact
+						},
+						target: 'es5',
+						// transform: {
+						// 	// "legacyDecorator": true // Legacy (stage 1) class decorators syntax and behavior.
+						// }
 					},
-					module: { type: 'es6' },
+					module: {
+						// ignoreDynamic: false, // If set to true, dynamic imports will be preserved.
+						// importInterop: 'swc', // Defaults to none if noInterop is true, and swc otherwise.
+						// lazy: false,
+
+						// Defaults to false. By default, when using exports with swc a non-enumerable __esModule property is exported.
+						// This property is then used to determine if the import is the default export or if it contains the default export.
+						// In cases where the auto-unwrapping of default is not needed,
+						// you can set the noInterop option to true to avoid the usage of the interopRequireDefault helper (shown in inline form above).
+						// noInterop: false,
+
+						// strict: false, // To prevent the __esModule property from being exported, you can set the strict option to true.
+						// strictMode: true, // If true, swc emits 'use strict' directive.
+
+						// type: 'amd'
+						// type: 'commonjs' // Didn't help, still uses export rather than exports :(
+						type: 'es6' // esm-to-cjs support this, not commonjs?
+						// type: 'umd'
+					},
 					/**
 					 * Generate inline source maps to enable esbuild to properly handle sourcemaps.
 					 */
