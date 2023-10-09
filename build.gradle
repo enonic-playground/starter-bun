@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'com.enonic.xp.app' version '3.4.0'
 	id 'com.github.jlouns.cpe' version '0.5.0'
+	// id 'com.github.node-gradle.node' version '7.0.0'
 }
 
 app {
@@ -57,6 +58,18 @@ dependencies {
 	// testImplementation "com.enonic.xp:testing:${xpVersion}"
 }
 
+// node {
+// 	// Whether to download and install a specific Node.js version or not
+// 	// If false, it will use the globally installed Node.js
+// 	// If true, it will download node using above parameters
+// 	// Note that npm is bundled with Node.js
+// 	download = true
+
+// 	// Version of node to download and install (only used if download is true)
+// 	// It will be unpacked in the workDir
+// 	version = '18.18.0'
+// }
+
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -69,15 +82,35 @@ tasks.withType(Copy).configureEach {
 }
 
 tasks.register('bunInstall', CrossPlatformExec) {
-	commandLine 'bun', 'install'
+	commandLine 'bunx', '--bun', 'bun', 'install'
 }
 
-tasks.register('bunBuild', CrossPlatformExec) {
-	commandLine 'bun', 'run', 'build'
+tasks.register('bunBuildServer', CrossPlatformExec) {
+	commandLine 'bunx', '--bun', 'bun', 'bun/buildSrcMainResources.ts'
+	dependsOn bunInstall
 }
+
+tasks.register('bunBuildStatic', CrossPlatformExec) {
+	commandLine 'bunx', '--bun', 'bun', 'bun/buildSrcMainResourcesStatic.ts'
+	dependsOn bunInstall
+}
+
+// tasks.register('npmBuild', NpmTask) {
+// 	args = [
+// 		'run',
+// 		'build'
+// 	]
+// 	dependsOn bunInstall
+// 	environment = [
+// 		'FORCE_COLOR': 'true',
+// 		'LOG_LEVEL_FROM_GRADLE': gradle.startParameter.logLevel.toString(),
+// 		'NODE_ENV': project.hasProperty('dev') || project.hasProperty('development') ? 'development' : 'production'
+// 	]
+// }
 
 wrapper {
 	distributionUrl = "https://services.gradle.org/distributions/gradle-8.4-all.zip"
 }
 
-jar.dependsOn bunBuild
+jar.dependsOn bunBuildServer
+jar.dependsOn bunBuildStatic
