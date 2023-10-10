@@ -1,0 +1,23 @@
+{ // This tsconfig is used for all *.ts files under site
+	"compilerOptions": {
+		"baseUrl": "..",
+		"lib": [
+			"ES5", // Nashorn
+		],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"paths": {
+			"/lib/xp/*": ["../../../../node_modules/@enonic-types/lib-*"],
+			"/*": ["../*"] // src/main/resources
+		},
+		"rootDir": "..",
+		"skipLibCheck": true,
+		"target": "ES5", // Nashorn
+		"types": [
+			"@enonic-types/global"
+		],
+	},
+	"include": [
+		"./**/*.ts"
+	]
+}

@@ -41,7 +41,8 @@
     "del-cli": "^5.0.0",
     "esbuild": "^0.19.4",
     "esm-to-cjs": "^1.2.1",
-    "prr": "^1.0.1"
+    "prr": "^1.0.1",
+    "xxh3-ts": "^1.0.6"
   },
   "private": true,
   "scripts": {

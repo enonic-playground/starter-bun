@@ -5,6 +5,8 @@
 // import {manifestBunPlugin} from './manifestBunPlugin';
 import * as fs from 'fs';
 import * as path from 'path';
+import { XXH64 } from 'xxh3-ts';
+import bigint2base from './bigint2base';
 
 // const result = await Bun.build({
 // 	entrypoints: ['./src/main/resources/**/*.ts'],
@@ -23,7 +25,9 @@ import * as path from 'path';
 // 	Bun.write(path.join("out", result.path), result);
 // }
 
-// CAUTION: These must be realtive to process.cwd() and not starting with dot!
+const BASE_36 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+// CAUTION: These must be relative to process.cwd() and not starting with dot!
 const outdir = 'build/resources/main/static';
 const root = 'src/main/resources/static';
 
@@ -106,6 +110,29 @@ for (const output of build.outputs) {
 		manifest[filename] = rel;
 	}
 }
+
+const filesToCopy = [
+	'react/umd/react.development.js',
+	'react-dom/umd/react-dom.development.js'
+];
+
+await Promise.all(filesToCopy.map(async (filePath) => {
+	const file = Bun.file(path.join('node_modules', filePath));
+	const arrbuf = await file.arrayBuffer();
+	const buffer = Buffer.from(arrbuf);
+	const hash = bigint2base(XXH64(buffer), BASE_36);
+	const parts = filePath.split('.');
+	const ext = parts.pop();
+	const newFileName = `${parts.join('.')}-${hash}.${ext}`;
+	manifest[filePath] = newFileName;
+	const newFilePath = path.join(outdir, newFileName);
+	const newFileParts = newFilePath.split('/');
+	newFileParts.pop();
+	const newFileBase = newFileParts.join('/');
+	if (!fs.existsSync(newFileBase)) fs.mkdirSync(newFileBase, {recursive: true})
+	await Bun.write(path.join(outdir, newFileName), file);
+}));
+
 // console.log('manifest:%s', JSON.stringify(manifest, null, 4));
 fs.writeFileSync(path.join(outdir, 'manifest.json'), JSON.stringify(manifest, null, 4));
 
